@@ -57,7 +57,7 @@ subprojects {
             compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker', version: '2.1.6.RELEASE'
 
 
-            developmentOnly 'org.springframework.boot:spring-boot-devtools'
+//            developmentOnly 'org.springframework.boot:spring-boot-devtools'
             runtimeOnly 'mysql:mysql-connector-java'
             annotationProcessor 'org.projectlombok:lombok'
             testImplementation('org.springframework.boot:spring-boot-starter-test') {
