@@ -1,0 +1,89 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.springframework.boot' version '2.2.5.RELEASE' apply false
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE' apply false
+
+}
+
+//所有工程定义
+allprojects {
+
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+
+    repositories {
+        maven{ url "http://maven.aliyun.com/repository/gradle-plugin"}
+    }
+
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+}
+
+//所有子工程的定义
+subprojects {
+    apply plugin:'java'
+    apply plugin:'idea'
+    apply plugin: 'io.spring.dependency-management'
+
+    //统一项目编码
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+
+    //增加spring-boot-devtools和lombok的生命周期
+    configurations {
+        developmentOnly
+        runtimeClasspath {
+            extendsFrom developmentOnly
+        }
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    if(!name.contains("web")){
+        apply plugin: 'org.springframework.boot'
+        apply plugin: 'application'
+
+        dependencies {
+            implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//            implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+            implementation 'org.springframework.boot:spring-boot-starter-security'
+            implementation 'org.springframework.boot:spring-boot-starter-web'
+            implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+            compileOnly 'org.projectlombok:lombok'
+            compile group: 'com.alibaba', name: 'fastjson', version: '1.2.62'
+            //在此引入jar依赖
+            compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker', version: '2.1.6.RELEASE'
+
+
+            developmentOnly 'org.springframework.boot:spring-boot-devtools'
+            runtimeOnly 'mysql:mysql-connector-java'
+            annotationProcessor 'org.projectlombok:lombok'
+            testImplementation('org.springframework.boot:spring-boot-starter-test') {
+                exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+            }
+            testImplementation 'org.springframework.security:spring-security-test'
+        }
+    }
+
+    //设置spring boot的版本并应用于所有子模块
+    dependencyManagement {
+        imports {
+            //mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    //编译所有子模块
+    dependencies {
+        subprojects() {
+            compile it;
+        }
+    }
+}
+
