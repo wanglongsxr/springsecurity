@@ -1,11 +1,9 @@
 package com.example.boot_securtiy.controller;
 
-import org.springframework.http.HttpRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,8 +35,7 @@ public class LoginController {
      * @date 2020/3/20 21:24
      */
     @RequestMapping("/login-success")
-    public String loginSuccess(Model model){
-        model.addAttribute("userName",getUserName());
+    public String loginSuccess(){
         return "hello";
     }
 
