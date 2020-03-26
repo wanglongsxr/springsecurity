@@ -11,12 +11,11 @@
  Target Server Version : 80017
  File Encoding         : 65001
 
- Date: 21/03/2020 12:06:18
+ Date: 23/03/2020 18:18:30
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
-
 -- ----------------------------
 -- Table structure for t_permission
 -- ----------------------------
@@ -34,6 +33,18 @@ CREATE TABLE `t_permission`  (
 -- ----------------------------
 INSERT INTO `t_permission` VALUES ('1', 'p1', '测试资源1', '/r/r1');
 INSERT INTO `t_permission` VALUES ('2', 'p2', '测试资源2', '/r/r2');
+
+-- ----------------------------
+-- Table structure for t_remember_token
+-- ----------------------------
+DROP TABLE IF EXISTS `t_remember_token`;
+CREATE TABLE `t_remember_token`  (
+  `SERIES` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '登录令牌',
+  `LOGIN_NAME` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
+  `TOKEN` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '一次性访问令牌',
+  `LAST_USED` timestamp(0) NOT NULL COMMENT '最后登录时间',
+  PRIMARY KEY (`SERIES`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for t_role
