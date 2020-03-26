@@ -37,6 +37,7 @@ public class RememberMeTokenService implements PersistentTokenRepository {
         rememberMeTokenDao.saveRememberMeToken(new RememberMeToken(token.getSeries(),token.getUsername(),token.getTokenValue(),token.getDate()));
     }
 
+    @Transactional
     @Override
     public void updateToken(String series, String tokenValue, Date lastUsed) {
         rememberMeTokenDao.updateRememberMeToken(series,tokenValue,lastUsed);

@@ -28,9 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private MyUserDetailService myUserDetailService;
 
-    //暂时有错误，待解决
     //具体详情请到RememberMeTokenService类查看
-    //如您可以帮解决第二种方式的错误，请立即联系我 qq:2647351651
     @Autowired
     private RememberMeTokenService rememberMeTokenService;
 
