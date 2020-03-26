@@ -14,15 +14,15 @@ import java.util.Optional;
 /**
  * @description: "记住我"的逻辑层（自定义数据库表名）
  * 原理是 重写JdbcTokenRepositoryImpl的resposity方式，从而让dao成为自定义库名
- * remember me暂时有错误，待解决
  *
- * 该方式会抛出一个Invalid remember-me token (Series/token) mismatch. Implies previous cookie theft attack错误，即为Cookie被盗的异常
- * 产生该错误的方式：首先第一次登录用户，跳转到首页，然后再重启服务器，再直接打开首页直接弹出该错误
- * 产生原因为：当cookie请求到过滤器的时候，直接走RememberMeAuthenticationFilter，没有上下文信息直接走ememberMeServices.autoLogin(request,esponse);
- * 然后拿到cookie，从而判断与数据库的token是否一致，一致之后更新token，问题就是出现在这，更新完之后，它会用旧的token与cookie值比，肯定不一致，所以抛出异常
+ * remember me的原理是：
+ * 成功登录后：将使用一些随机哈希为用户创建一个永久令牌。将为用户创建一个cookie，上面带有令牌详细信息。为用户创建一个会话。只要用户仍具有活动会话，就不会在身份验证时调用我的功能。
+ *
+ * 用户会话到期后： “记住我”功能将启动并使用cookie从数据库中获取持久性令牌。如果持久令牌与cookie中的令牌匹配，则每个人都对用户进行身份验证感到满意，将生成一个新的随机哈希，并使用持久令牌进行更新，并为后续请求更新用户的cookie。
+ *
+ * 但是，如果Cookie中的令牌与持久令牌中的令牌不匹配，则会收到CookieTheftException。令牌不匹配的最常见原因是快速连续触发了两个或更多请求，第一个请求将通过，并为随后的请求生成新的哈希，但第二个请求仍将旧令牌打开它并因此导致异常。
  * 具体详情在PersistentTokenBasedRememberMeServices的processAutoLoginCookie方法内
  *
- * 如您可以帮解决错误，请立即联系我 qq:2647351651
  * @author: wanglong
  * @time: 2020/3/23 17:31
  */

@@ -34,8 +34,8 @@ public class MyUserDetailService implements UserDetailsService {
             String[] permissionArray = new String[permissions.size()];
             permissions.toArray(permissionArray);
 
-            //返回userDetail，用它去与页面上的输入值作比较
-            return org.springframework.security.core.userdetails.User.withUsername(a.getFullname()).password(a.getPassword()).authorities(permissionArray).build();
+            //返回userDetail,返回用户的信息封装到SecurityContextHolder里面
+            return org.springframework.security.core.userdetails.User.withUsername(a.getUsername()).password(a.getPassword()).authorities(permissionArray).build();
         }).orElse(null);
         return userDetails;
     }
