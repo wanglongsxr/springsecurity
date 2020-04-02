@@ -1,7 +1,8 @@
 function login() {
     var username = $("input[name=username]").val();
     var password = $("input[name=password]").val();
-    var rememberMe = $("input[name=remember-me]").is(":checked");
+    var captcha = $("input[name=captcha]").val();
+    var rememberMe = $("input[name=rememberMe]").is(":checked");
     if (username === "" || password === "") {
         alert("用户名或密码不能为空");
         return;
@@ -9,11 +10,12 @@ function login() {
     $.ajax({
         type: "POST",
         url: "/authentication/form",
-        data: {
+        data: JSON.stringify({
             "username": username,
             "password": password,
-            "remember-me":rememberMe
-        },
+            "rememberMe":rememberMe,
+            "captcha":captcha
+        }),
         success: function (e) {
             alert("登陆成功");
             setTimeout(function () {
@@ -21,6 +23,7 @@ function login() {
             }, 1500);
         },
         error: function (e) {
+            console.log(e);
             alert("登陆失败")
         }
     });

@@ -55,6 +55,9 @@ subprojects {
             compile group: 'com.alibaba', name: 'fastjson', version: '1.2.62'
             //在此引入jar依赖
             compile group: 'org.springframework.boot', name: 'spring-boot-starter-freemarker', version: '2.1.6.RELEASE'
+            compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
+            compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
 
 
 //            developmentOnly 'org.springframework.boot:spring-boot-devtools'

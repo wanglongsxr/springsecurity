@@ -22,7 +22,7 @@ import java.io.IOException;
 public class AuthenticationFailedHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         System.err.println("登录失败~~~~~~~");
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setCharacterEncoding("UTF-8");
