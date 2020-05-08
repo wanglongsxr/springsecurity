@@ -28,8 +28,10 @@ function login() {
         },
         error: function (e) {
             console.log(e);
-            alert(e.responseText);
-            // alert("登陆失败")
+            alert("登录失败，失败原因("+e.responseText+")");
+            setTimeout(function () {
+                location.href = '/login';
+            }, 1500);
         }
     });
 }

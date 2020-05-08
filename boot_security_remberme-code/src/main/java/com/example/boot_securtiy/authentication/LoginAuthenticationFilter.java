@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  * @description: 登录过滤器
@@ -56,13 +57,13 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
             throw new InsufficientAuthenticationException("身份验证失败");
         }
         //校验验证码
-        verificationCaptcha(loginRequest,request);
+        verificationCaptcha(loginRequest,request,response);
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),loginRequest.getPassword());
         return this.getAuthenticationManager().authenticate(token);
     }
 
-    private void verificationCaptcha(LoginRequest loginRequest,HttpServletRequest request) {
+    private void verificationCaptcha(LoginRequest loginRequest,HttpServletRequest request,HttpServletResponse response) throws IOException {
         HttpSession session = request.getSession();
         String captcha = loginRequest.getCaptcha();
         String verificationCode = (String)session.getAttribute("captcha");

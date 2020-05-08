@@ -16,6 +16,11 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+/**
+ * @description 生成验证码
+ * @author wanglong
+ * @date 2020/5/8 10:27
+ */
 @Getter
 @Setter
 @Controller
