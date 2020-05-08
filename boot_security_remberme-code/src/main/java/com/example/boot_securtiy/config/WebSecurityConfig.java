@@ -95,5 +95,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable();//token有效期，这里配置60秒
 
+        http.authorizeRequests()
+                .and()
+                .rememberMe()
+                .rememberMeServices(persistentTokenBasedRememberMeServices())
+                .key("remember-me");
     }
 }
