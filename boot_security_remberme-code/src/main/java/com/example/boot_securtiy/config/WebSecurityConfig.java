@@ -1,8 +1,6 @@
 package com.example.boot_securtiy.config;
 
-import com.example.boot_securtiy.authentication.AuthenticationFailedHandler;
-import com.example.boot_securtiy.authentication.AuthenticationSuccessHandler;
-import com.example.boot_securtiy.authentication.LoginAuthentication;
+import com.example.boot_securtiy.authentication.LoginAuthenticationFilter;
 import com.example.boot_securtiy.service.MyUserDetailService;
 import com.example.boot_securtiy.service.RememberMeTokenService;
 import com.google.code.kaptcha.Producer;
@@ -11,12 +9,14 @@ import com.google.code.kaptcha.util.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 
 import java.util.Properties;
 
@@ -29,9 +29,7 @@ import java.util.Properties;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
-    @Autowired
-    private AuthenticationFailedHandler authenticationFailedHandler;
+    private LoginAuthenticationFilter loginAuthenticationFilter;
     @Autowired
     private MyUserDetailService myUserDetailService;
 
@@ -45,14 +43,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public LoginAuthentication authenticationFilter() throws Exception {
-        LoginAuthentication loginAuthentication = new LoginAuthentication();
-        loginAuthentication.setAuthenticationSuccessHandler(authenticationSuccessHandler);
-        loginAuthentication.setAuthenticationFailureHandler(authenticationFailedHandler);
-        loginAuthentication.setAuthenticationManager(authenticationManagerBean());
-        return loginAuthentication;
-    }
 
     @Bean
     public Producer captcha() {
@@ -66,7 +56,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
     }
-
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+    @Bean
+    public PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices() {
+        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices("remember-me"
+                , myUserDetailService, rememberMeTokenService);
+        services.setAlwaysRemember(true);
+        return services;
+    }
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers("/js/**");
@@ -80,11 +81,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(loginAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
+
         http.formLogin()
                 .loginPage("/login")//登录页
-//                .loginProcessingUrl("/authentication/form")//自定义登录
-//                .successHandler(authenticationSuccessHandler)//自定义成功鉴权
-//                .failureHandler(authenticationFailureHandler)//自定义失败鉴权
                 .and().logout().logoutUrl("/logout")//定义退出页
                 .and().authorizeRequests()
                 .antMatchers("/r/r1").hasAuthority("p1")//拥有p1权限的人才能访问r1资源
@@ -93,12 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login","/captcha","/authentication/form")
                 .permitAll().anyRequest().authenticated()
                 .and()
-                .rememberMe().rememberMeParameter("rememberMe")//rememberMeParameter方法是自定义表单中的name属性，如果没有该方法，security默认强制是remember-me
-                //.rememberMeCookieName("remember")//如果你想让调试菜单（F12）中的cookie换个名字的话，请使用此方法
-                .tokenRepository(rememberMeTokenService)//数据访问层,token持久化方案
-                .userDetailsService(myUserDetailService)//用来指定获取用户信息的服务
-                .tokenValiditySeconds(3600)
-                .and().addFilterAt(authenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable();//token有效期，这里配置60秒
+
     }
 }

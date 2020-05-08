@@ -1,11 +1,13 @@
 package com.example.boot_securtiy.authentication;
 
-import com.example.boot_securtiy.model.AuthenticaitonDetails;
 import com.example.boot_securtiy.service.MyUserDetailService;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -20,17 +22,24 @@ public class AuthenticationProvider extends DaoAuthenticationProvider {
     public AuthenticationProvider(MyUserDetailService myUserDetailService, PasswordEncoder passwordEncoder) {
         this.setUserDetailsService(myUserDetailService);
         this.setPasswordEncoder(passwordEncoder);
+        //禁止用户不存在不抛异常
+        this.setHideUserNotFoundExceptions(false);
     }
 
     @Override
-    protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
-        //获取详细信息
-        AuthenticaitonDetails details = (AuthenticaitonDetails) authentication.getDetails();
-        //一旦发现验证码不正确，就立即抛出相应异常信息
-        if(!details.isVerificationCodeIfAgree()){
-            throw new RuntimeException("验证码不正确-------------------------");
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        UsernamePasswordAuthenticationToken token = (UsernamePasswordAuthenticationToken) authentication;
+        String username = token.getName();
+        UserDetails userDetails = this.getUserDetailsService().loadUserByUsername(username);
+        // 验证密码是否正确
+        if (!new BCryptPasswordEncoder().matches((CharSequence) token.getCredentials(), userDetails.getPassword())) {
+            throw new AuthenticationServiceException("用户名或密码错误！！！");
         }
-        //继续调用父类的方法完成密码验证
-        super.additionalAuthenticationChecks(userDetails, authentication);
+        return new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword(), userDetails.getAuthorities());
+    }
+
+    @Override
+    public boolean supports(Class<?> authentication) {
+        return UsernamePasswordAuthenticationToken.class.equals(authentication);
     }
 }

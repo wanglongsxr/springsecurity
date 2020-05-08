@@ -7,6 +7,10 @@ function login() {
         alert("用户名或密码不能为空");
         return;
     }
+    if (captcha === "" || captcha === null) {
+        alert("验证码不能为空");
+        return;
+    }
     $.ajax({
         type: "POST",
         url: "/authentication/form",
@@ -24,7 +28,8 @@ function login() {
         },
         error: function (e) {
             console.log(e);
-            alert("登陆失败")
+            alert(e.responseText);
+            // alert("登陆失败")
         }
     });
 }
