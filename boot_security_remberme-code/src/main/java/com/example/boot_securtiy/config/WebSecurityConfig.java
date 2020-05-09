@@ -28,6 +28,11 @@ import java.util.Properties;
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    //静态资源放行url
+    private static final String[] staticDcUrl = {"/js/**"};
+    //动态资源放行url
+    private static final String[] dynamicDcUrl = {"/login","/captcha","/authentication/form"};
+
     @Autowired
     private LoginAuthenticationFilter loginAuthenticationFilter;
     @Autowired
@@ -70,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/js/**");
+        web.ignoring().antMatchers(staticDcUrl);
     }
 
     /**
@@ -90,10 +95,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/r/r1").hasAuthority("p1")//拥有p1权限的人才能访问r1资源
                 .antMatchers("/r/r2").hasAuthority("p2")//拥有p2权限的人才能访问r2资源
                 .antMatchers("/r/**").authenticated()//对r/**的资源放行
-                .antMatchers("/login","/captcha","/authentication/form")
+                .antMatchers(dynamicDcUrl)
                 .permitAll().anyRequest().authenticated()
                 .and()
-                .csrf().disable();//token有效期，这里配置60秒
+                .csrf().disable();
 
         http.authorizeRequests()
                 .and()
