@@ -62,7 +62,7 @@ springboot整合springsecurity 的练手项目
 
    * 下图请求登录接口，后台生成token，并存储redis
 
-     ![访问登录页](https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/0be0f0944b0bfc3013b39780e6288a78801a07c3.png)
+     ![访问登录页](https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/6be29754b64a9d73f8c8cd3160fa03236aa810eb.png)
 
    * 下图为访问首页接口，切记，带上token；
 
