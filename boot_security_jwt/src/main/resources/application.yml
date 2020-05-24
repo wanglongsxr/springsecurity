@@ -1,0 +1,21 @@
+server:
+  port: 8083
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/boot-security?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone = GMT
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: ctfo002373
+
+jwt:
+  tokenHeader: Authorization #JWT存储的请求头
+  secret: defaultSecret #JWT加解密使用的密钥
+  tokenHead: Bearer  #JWT负载中拿到开头
+  md5Key: randomKey #token的唯一标记，目前用于redis里存储，解决同账号，同时只能单用户登录的情况
+  preventsLogin: false # 判断是否开启允许多人同账号同时在线，若不允许的话则将上一个人T掉，默认false，不T掉，允许多人登录，true：T掉
+  preventsGetMethod: true #GET请求是否需要进行Authentication请求头校验，true：默认校验；false：不拦截GET请求

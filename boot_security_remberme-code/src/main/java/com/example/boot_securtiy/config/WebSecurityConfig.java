@@ -94,7 +94,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests()
                 .antMatchers("/r/r1").hasAuthority("p1")//拥有p1权限的人才能访问r1资源
                 .antMatchers("/r/r2").hasAuthority("p2")//拥有p2权限的人才能访问r2资源
-                .antMatchers("/r/**").authenticated()//对r/**的资源放行
+                .antMatchers("/r/**").authenticated()//对r/**的资源需要认证
                 .antMatchers(dynamicDcUrl)
                 .permitAll().anyRequest().authenticated()
                 .and()

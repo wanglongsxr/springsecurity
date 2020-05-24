@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
  * @time: 2020/3/17 11:16
  */
 @Configuration
+@EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -41,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/r/r1").hasAuthority("p1")//拥有p1权限的人才能访问r1资源
                 .antMatchers("/r/r2").hasAuthority("p2")//拥有p2权限的人才能访问r2资源
-                .antMatchers("/r/**").authenticated()//对r/**的资源放行
+                .antMatchers("/r/**").authenticated()//对r/**的资源需要认证
                 .antMatchers("/login", "/authentication/require",
                         "/authentication/form").permitAll()//对以上资源路径放行
                 .anyRequest()// 任何请求
