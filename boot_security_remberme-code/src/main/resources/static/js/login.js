@@ -14,12 +14,12 @@ function login() {
     $.ajax({
         type: "POST",
         url: "/authentication/form",
-        data: JSON.stringify({
+        data: {
             "username": username,
             "password": password,
             "rememberMe":rememberMe,
             "captcha":captcha
-        }),
+        },
         success: function (e) {
             alert("登陆成功");
             setTimeout(function () {

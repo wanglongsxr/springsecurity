@@ -2,6 +2,7 @@ package com.example.boot_securtiy.dao;
 
 import com.example.boot_securtiy.model.RememberMeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -46,7 +47,19 @@ public class RememberMeTokenDao {
     }
     public RememberMeToken getRememberMeToken( String seriesId){
         String sql ="select login_name,series,token,last_used from t_remember_token where series=?";
-        RememberMeToken rememberMeToken = jdbcTemplate.queryForObject(sql,new BeanPropertyRowMapper<>(RememberMeToken.class), seriesId);
+        RememberMeToken rememberMeToken = null;
+        try {
+             rememberMeToken = jdbcTemplate.queryForObject(sql,new Object[]{seriesId},(rs, rowNum) -> {
+                RememberMeToken token = new RememberMeToken();
+                token.setSeries(rs.getString("SERIES"));
+                token.setToken(rs.getString("TOKEN"));
+                token.setLastUsed(rs.getTimestamp("LAST_USED"));
+                token.setLoginName(rs.getString("LOGIN_NAME"));
+                return token;
+            });
+        } catch (Exception e) {
+        return null;
+    }
         return rememberMeToken;
     }
 }

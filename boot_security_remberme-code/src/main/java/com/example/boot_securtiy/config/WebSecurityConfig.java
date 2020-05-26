@@ -71,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices("remember-me"
                 , myUserDetailService, rememberMeTokenService);
         services.setTokenValiditySeconds(3600);
-        services.setCookieName("remember");
+        services.setParameter("rememberMe");
         return services;
     }
     @Override
@@ -89,8 +89,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.addFilterBefore(loginAuthenticationFilter,UsernamePasswordAuthenticationFilter.class);
 
-        //注意：anyRequest().authenticated()是不可以与remember me这个功能同时存在的！！！！！！
-
         http.formLogin()
                 .loginPage("/login")//登录页
                 .and().logout().logoutUrl("/logout")//定义退出页
@@ -99,8 +97,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/r/r2").hasAuthority("p2")//拥有p2权限的人才能访问r2资源
                 .antMatchers("/r/**").authenticated()//对r/**的资源需要认证
                 .antMatchers(dynamicDcUrl)
-                .permitAll()
+                .permitAll().anyRequest().authenticated()
                 .and()
                 .csrf().disable();
+
+        http.authorizeRequests()
+                .and()
+                .rememberMe()
+                .rememberMeServices(persistentTokenBasedRememberMeServices())
+                .key("remember-me");
     }
 }
